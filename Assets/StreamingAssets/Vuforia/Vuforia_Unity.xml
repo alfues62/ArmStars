@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig>
+  <Tracking>
+    <ImageTarget name="Marca_Projecto" size="1.000000 1.000000" />
+    <ImageTarget name="JJJ" size="1.000000 1.332999" />
+    <ImageTarget name="pixar-toystory" size="1.000000 1.166287" />
+    <ImageTarget name="Renfe" size="1.000000 1.606403" />
+    <ImageTarget name="joker" size="2.000000 2.853516" />
+  </Tracking>
+</QCARConfig>
