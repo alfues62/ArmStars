@@ -14,5 +14,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/armMovement.unity
     guid: 7e916ac6088f6224689da14955d63125
+  - enabled: 1
+    path: Assets/Scenes/armInspection.unity
+    guid: b7669cdd7fd5caf4f8b8db94de8ccc39
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
