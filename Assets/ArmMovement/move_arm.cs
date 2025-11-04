@@ -8,6 +8,7 @@ public class move_arm : MonoBehaviour
     public GameObject boneReferenceX;
     public GameObject boneReferenceY;
     public GameObject handBoneToCheckClipping;
+    public bool isRivalArm = false;
     public bool isHand;
 
     private float xActual = 0.0f;
@@ -30,6 +31,11 @@ public class move_arm : MonoBehaviour
             float x_new = Mathf.Clamp(xActual + x_rotAmount, -140.0f, 170.0f); //limites reales: -70, 85
             float x_diff = x_new - xActual; // la diferencia entre donde esta la rotacion y a donde quiere rotar, si ya esta en el limite será 0 y no rotará
 
+            if (isRivalArm)
+            {
+                //y_diff = -y_diff;
+                x_diff = -x_diff;
+            }
 
             boneReferenceY.transform.Rotate(Vector3.forward, y_diff);
             boneReferenceX.transform.Rotate(Vector3.right*-1, x_diff);
@@ -53,7 +59,13 @@ public class move_arm : MonoBehaviour
             float x_new = Mathf.Clamp(xActual + x_rotAmount, -160.0f, 160.0f); //limites reales: -80, 80
             float x_diff = x_new - xActual; // la diferencia entre donde esta la rotacion y a donde quiere rotar, si ya esta en el limite será 0 y no rotará
 
-            boneReferenceY.transform.Rotate(Vector3.forward, y_diff);
+            if (isRivalArm)
+            {
+                //y_diff = -y_diff;
+                x_diff = -x_diff;
+            }
+
+            //boneReferenceY.transform.Rotate(Vector3.forward, y_diff);
             boneReferenceX.transform.Rotate(Vector3.right*-1, x_diff);
             // forward para flexionar el codo
             // right para rotar el codo

@@ -1,0 +1,2 @@
+C:\Users\alfue\Proys Unity\Prueba\ArmStars\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\CMakeLists.txt
+C:\Users\alfue\Proys Unity\Prueba\ArmStars\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\GameActivity\CMakeLists.txt
