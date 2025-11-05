@@ -12,7 +12,7 @@ public class SceneLoader : MonoBehaviour
     // Método público para cargar la segunda escena (ejemplo)
     public void changeArmMovement()
     {
-        SceneManager.LoadScene("armMovement");
+        SceneManager.LoadScene("armInspection");
     }
 
     public void chargeVideoMenu ()
