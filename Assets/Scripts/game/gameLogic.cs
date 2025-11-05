@@ -5,7 +5,7 @@ public class gameLogic : MonoBehaviour
 {
     public gameData dataScript;
 
-    [Header("UI Elements")] // 2. <-- AÑADE ESTAS LÍNEAS
+    [Header("UI Elements")]
     public TMP_Text roundText;
 
     [Header("Opponent Data")]
@@ -22,60 +22,43 @@ public class gameLogic : MonoBehaviour
             dataScript = FindAnyObjectByType<gameData>();
         }
 
-        CheckOpponentStatus();
+        opponentIndex = dataScript.GetCurrentOpponentIndex();  // Sincroniza el oponente actual
+        int status = CheckOpponentStatus();
+
+        // Puedes usar el valor `status` para hacer algo más adelante en tu código.
+        // Aquí solo lo estamos mostrando por ejemplo.
+        Debug.Log("Opponent status: " + status);
     }
 
-    void CheckOpponentStatus()
+    // Función que devuelve el estado del oponente actual
+    public int CheckOpponentStatus()
     {
-        // Avanzar mientras el oponente actual esté derrotado
-        while (opponentIndex < dataScript.opponents && dataScript.defeatedOpponents[opponentIndex])
-        {
-            Debug.Log($"⏩ Opponent {opponentIndex + 1} already defeated. Moving to next.");
-            opponentIndex++;
-        }
+        int currentOpponentIndex = dataScript.GetCurrentOpponentIndex();
 
-        // Si no quedan oponentes
-        if (opponentIndex >= dataScript.opponents)
+        // Si el oponente ya ha sido derrotado
+        if (opponentIndex < currentOpponentIndex)
         {
-            Debug.Log("🏁 All opponents defeated!");
-            // Aquí puedes lanzar la lógica de final de nivel
+            return 1; // Oponente ya derrotado
         }
+        // Si el oponente aún no ha sido desbloqueado
+        else if (opponentIndex > currentOpponentIndex)
+        {
+            return 2; // Oponente aún no desbloqueado
+        }
+        // Si el oponente es el que toca (actual)
         else
         {
-            Debug.Log($"🎯 Current opponent: {opponentIndex + 1}");
-            roundsWon = 0;
-            roundsPlayed = 0;
-            bossDefeated = false;
+            return 0; // Es el turno de este oponente
         }
-
-        UpdateRoundText();
-    }
-
-    void Update()
-    {
-        // Simula ganar una ronda con SPACE
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            WinRound();
         }
-
-        // Simula perder una ronda con L
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            LoseRound();
-        }
-    }
-
-    // --- NUEVA FUNCIÓN ---
-    // Actualiza el texto del canvas
     void UpdateRoundText()
-    {
-        if (roundText != null)
         {
-            // Usamos $ para formatear el string fácilmente
-            roundText.text = $"Ronda: {roundsPlayed} / {totalRounds}";
+            if (roundText != null)
+            {
+                // Usamos $ para formatear el string fácilmente
+                roundText.text = $"Ronda: {roundsPlayed} / {totalRounds}";
+            }
         }
-    }
 
     public void WinRound()
     {
@@ -83,7 +66,6 @@ public class gameLogic : MonoBehaviour
 
         roundsPlayed++;
         roundsWon++;
-        Debug.Log($"🏆 Won round {roundsPlayed} / {totalRounds}");
 
         UpdateRoundText();
 
@@ -106,20 +88,21 @@ public class gameLogic : MonoBehaviour
     {
         if (roundsPlayed >= totalRounds)
         {
-            // Si ganó 2 o más, se considera victoria
             if (roundsWon >= 2)
             {
                 bossDefeated = true;
                 dataScript.RegisterVictory(opponentIndex);
 
-                // PASAR AL SIGUIENTE OPONENTE AUTOMÁTICAMENTE
-                opponentIndex++;
+                // Actualizamos el oponente actual
+                dataScript.UpdateCurrentOpponent();  // Asegúrate de que el índice se actualice
+
+                // Obtener el siguiente oponente
+                opponentIndex = dataScript.GetCurrentOpponentIndex();
                 CheckOpponentStatus();
             }
             else
             {
-                Debug.Log("💀 You lost against this boss.");
-                // Reinicia para volver a intentar
+
                 roundsWon = 0;
                 roundsPlayed = 0;
 

@@ -10,6 +10,23 @@ public class GyroRotationWithAnimation : MonoBehaviour
     [Header("Lógica de Juego")]
     public gameLogic miGameLogic;
 
+    [Header("Tiempo antes del go")]
+    public float randomWaitTimeMin = 1f; // Tiempo mínimo para el random
+    public float randomWaitTimeMax = 3f; // Tiempo máximo para el random
+
+    [Header("Configuración de Tiempos de Reacción")]
+    public float[] reactionTimes;
+
+    [Header("Configuración de Audio")]
+    public AudioSource AudioSource; 
+    public AudioClip countdownClip;
+    public AudioClip goClip;
+
+    [Header("UI")]
+    public GameObject uiPanelOponenteDerrotado;  // Panel que muestra el mensaje si el oponente ya ha sido derrotado
+    public GameObject uiPanelOponenteNoDisponible;  // Panel que muestra el mensaje si el oponente no está disponible
+    public GameObject uiPanelEsperando;
+
     [Header("Huesos a Rotar")]
     public Transform huesoBrazos;
     public Transform huesoBrazos001;
@@ -103,17 +120,53 @@ public class GyroRotationWithAnimation : MonoBehaviour
         
     }
 
-    // --- NUEVA FUNCIÓN PÚBLICA (Llamada por Vuforia) ---
     public void StartGameProcess()
     {
         // Solo iniciar si no está ya en marcha
         if (currentGameLoop == null)
         {
-            if (rotationText) rotationText.text = "¡Marca detectada!";
-            // Iniciar el bucle y guardar la referencia
-            currentGameLoop = StartCoroutine(GameLoop());
+            // Llamamos a CheckOpponentStatus para obtener el estado del oponente
+            int status = miGameLogic.CheckOpponentStatus();
+
+            // Dependiendo del estado, ejecutamos la acción correspondiente
+            switch (status)
+            {
+                case 0:  // Oponente actual
+                    if (rotationText) rotationText.text = "¡Marca detectada!";
+                    if (uiPanelEsperando) uiPanelEsperando.SetActive(false); // Ocultamos el panel de espera si ya estamos listos
+
+                    // Iniciar el bucle y guardar la referencia
+                    currentGameLoop = StartCoroutine(GameLoop());
+                    break;
+
+                case 1:  // Oponente ya derrotado
+                    if (rotationText) rotationText.text = "Este oponente ya ha sido derrotado. ¡Prueba otro!";
+                    // Mostrar el panel de oponente derrotado
+                    if (uiPanelOponenteDerrotado) uiPanelOponenteDerrotado.SetActive(true);
+
+                    // Asegurarnos de que los otros paneles no estén activos
+                    if (uiPanelOponenteNoDisponible) uiPanelOponenteNoDisponible.SetActive(false);
+                    if (uiPanelEsperando) uiPanelEsperando.SetActive(false);
+
+                    break;
+
+                case 2:  // Oponente aún no desbloqueado
+                    if (rotationText) rotationText.text = "Este oponente aún no está disponible.";
+                    // Mostrar el panel de oponente no disponible
+                    if (uiPanelOponenteNoDisponible) uiPanelOponenteNoDisponible.SetActive(true);
+
+                    // Asegurarnos de que los otros paneles no estén activos
+                    if (uiPanelOponenteDerrotado) uiPanelOponenteDerrotado.SetActive(false);
+                    if (uiPanelEsperando) uiPanelEsperando.SetActive(false);
+
+                    break;
+
+                default:
+                    break;
+            }
         }
     }
+
 
     // --- NUEVA FUNCIÓN PÚBLICA (Llamada por Vuforia) ---
     public void StopGameProcess()
@@ -139,6 +192,8 @@ public class GyroRotationWithAnimation : MonoBehaviour
     {
         while (true) // Este bucle ahora se repite solo mientras la corutina esté activa
         {
+            // Determinar el tiempo de reacción según el enemigo actual
+            float tiempoReaccion = GetReactionTimeForEnemy(miGameLogic.dataScript.GetCurrentOpponentIndex());
             // --- 1. FASE DE ESPERA (IDLE) ---
             currentState = GameState.Idle;
             rotationText.text = "Prepárate...";
@@ -147,19 +202,22 @@ public class GyroRotationWithAnimation : MonoBehaviour
             // --- 2. FASE DE CUENTA ATRÁS (COUNTDOWN) ---
             currentState = GameState.Countdown;
             rotationText.text = "3";
-            yield return new WaitForSeconds(1.0f);
-            rotationText.text = "2";
-            yield return new WaitForSeconds(1.0f);
-            rotationText.text = "1";
-            yield return new WaitForSeconds(1.0f);
+            PlayAudioClip(countdownClip);
+            yield return new WaitForSeconds(countdownClip.length);
+            yield return new WaitForSeconds(Random.Range(randomWaitTimeMin, randomWaitTimeMax));
 
             // --- 3. FASE DE ESCUCHA (LISTENING) ---
             currentState = GameState.Listening;
             rotationText.text = "¡GO!";
+
+            // Reproducir el sonido de "¡GO!".
+            PlayAudioClip(goClip);
+
+
             bool success = false;
             float windowTimer = 0f;
 
-            while (windowTimer < successWindowDuration)
+            while (windowTimer < tiempoReaccion) // El tiempo de reacción cambia por enemigo
             {
                 if (playerTiltedLeft)
                 {
@@ -191,7 +249,6 @@ public class GyroRotationWithAnimation : MonoBehaviour
                     miGameLogic.LoseRound();
                 }
             }
-            // (La corutina de animación ya pone isAnimating en false al acabar)
         }
     }
 
@@ -231,7 +288,7 @@ public class GyroRotationWithAnimation : MonoBehaviour
 
             if (huesoBrazos)
             {
-                huesoBrazos.localPosition = Vector3.Lerp(p1_start, p1_target, t);
+                huesoBrazos.localPosition = Vector3.Lerp(p1_start, p1_target, t);   
                 huesoBrazos.localRotation = Quaternion.Slerp(r1_start, r1_target, t);
             }
             if (huesoBrazos001)
@@ -246,5 +303,25 @@ public class GyroRotationWithAnimation : MonoBehaviour
 
         if (huesoBrazos) { huesoBrazos.localPosition = p1_target; huesoBrazos.localRotation = r1_target; }
         if (huesoBrazos001) { huesoBrazos001.localPosition = p2_target; huesoBrazos001.localRotation = r2_target; }
+    }
+    void PlayAudioClip(AudioClip clip)
+    {
+        if (!AudioSource.isPlaying)
+        {
+            AudioSource.PlayOneShot(clip);
+        }
+    }
+    float GetReactionTimeForEnemy(int enemyIndex)
+    {
+        // Asegúrate de que el índice no se salga de los límites del array
+        if (enemyIndex >= 0 && enemyIndex < reactionTimes.Length)
+        {
+            return reactionTimes[enemyIndex];  // Devuelve el tiempo de reacción basado en el índice
+        }
+        else
+        {
+            // Si el índice no es válido, retorna un valor por defecto
+            return 1.0f;  // Tiempo por defecto si no se encuentra el índice
+        }
     }
 }
