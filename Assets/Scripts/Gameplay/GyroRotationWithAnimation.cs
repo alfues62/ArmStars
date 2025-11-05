@@ -7,6 +7,9 @@ public class GyroRotationWithAnimation : MonoBehaviour
     [Header("UI")]
     public TMP_Text rotationText; // Para mostrar el 3, 2, 1, Go!
 
+    [Header("Lógica de Juego")]
+    public gameLogic miGameLogic;
+
     [Header("Huesos a Rotar")]
     public Transform huesoBrazos;
     public Transform huesoBrazos001;
@@ -37,6 +40,8 @@ public class GyroRotationWithAnimation : MonoBehaviour
 
     void Start()
     {
+
+        miGameLogic = FindAnyObjectByType<gameLogic>();
         // Activar giroscopio
         if (SystemInfo.supportsGyroscope)
         {
@@ -81,7 +86,7 @@ public class GyroRotationWithAnimation : MonoBehaviour
         // El input se sigue detectando siempre,
         // pero solo importa cuando el estado es 'Listening'
         playerTiltedLeft = false;
-
+        
         if (gyroEnabled)
         {
             if (Input.gyro.rotationRateUnbiased.z * Mathf.Rad2Deg > rotationThreshold)
@@ -94,6 +99,8 @@ public class GyroRotationWithAnimation : MonoBehaviour
         {
             playerTiltedLeft = true;
         }
+
+        
     }
 
     // --- NUEVA FUNCIÓN PÚBLICA (Llamada por Vuforia) ---
@@ -170,11 +177,19 @@ public class GyroRotationWithAnimation : MonoBehaviour
             {
                 rotationText.text = "¡BIEN HECHO!";
                 yield return StartCoroutine(DoRotation_Success());
+                if (miGameLogic != null)
+                {
+                    miGameLogic.WinRound();
+                }
             }
             else
             {
                 rotationText.text = "¡FALLO!";
                 yield return StartCoroutine(DoRotation_Fail());
+                if (miGameLogic != null)
+                {
+                    miGameLogic.LoseRound();
+                }
             }
             // (La corutina de animación ya pone isAnimating en false al acabar)
         }

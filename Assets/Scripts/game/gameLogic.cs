@@ -1,8 +1,12 @@
 ﻿using UnityEngine;
+using TMPro;
 
 public class gameLogic : MonoBehaviour
 {
     public gameData dataScript;
+
+    [Header("UI Elements")] // 2. <-- AÑADE ESTAS LÍNEAS
+    public TMP_Text roundText;
 
     [Header("Opponent Data")]
     private int opponentIndex;
@@ -43,6 +47,8 @@ public class gameLogic : MonoBehaviour
             roundsPlayed = 0;
             bossDefeated = false;
         }
+
+        UpdateRoundText();
     }
 
     void Update()
@@ -60,6 +66,16 @@ public class gameLogic : MonoBehaviour
         }
     }
 
+    // --- NUEVA FUNCIÓN ---
+    // Actualiza el texto del canvas
+    void UpdateRoundText()
+    {
+        if (roundText != null)
+        {
+            // Usamos $ para formatear el string fácilmente
+            roundText.text = $"Ronda: {roundsPlayed} / {totalRounds}";
+        }
+    }
 
     public void WinRound()
     {
@@ -68,6 +84,8 @@ public class gameLogic : MonoBehaviour
         roundsPlayed++;
         roundsWon++;
         Debug.Log($"🏆 Won round {roundsPlayed} / {totalRounds}");
+
+        UpdateRoundText();
 
         CheckVictoryCondition();
     }
@@ -78,6 +96,8 @@ public class gameLogic : MonoBehaviour
 
         roundsPlayed++;
         Debug.Log($"❌ Lost round {roundsPlayed} / {totalRounds}");
+
+        UpdateRoundText();
 
         CheckVictoryCondition();
     }
@@ -102,6 +122,8 @@ public class gameLogic : MonoBehaviour
                 // Reinicia para volver a intentar
                 roundsWon = 0;
                 roundsPlayed = 0;
+
+                UpdateRoundText();
             }
         }
     }
