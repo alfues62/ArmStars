@@ -439,7 +439,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 78b60000
     m_LastClickedID: 46712
-    m_ExpandedIDs: 0000000058b50000cab5000000ca9a3b
+    m_ExpandedIDs: 0000000058b50000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -548,8 +548,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Inspector\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1447
-    y: 79
+    x: 1448
+    y: 24
     width: 472
     height: 907
   m_SerializedDataModeController:
@@ -599,7 +599,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 79
+    y: 24
     width: 343
     height: 537
   m_SerializedDataModeController:
@@ -665,8 +665,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Scene\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 344
-    y: 79
+    x: 345
+    y: 24
     width: 1101
     height: 537
   m_SerializedDataModeController:
@@ -1147,7 +1147,7 @@ MonoBehaviour:
   m_Rotation:
     m_Target: {x: 0.12053053, y: -0.8778582, z: 0.35502276, w: 0.29803446}
     speed: 2
-    m_Value: {x: 0.120528825, y: -0.87784576, z: 0.35501772, w: 0.29803023}
+    m_Value: {x: -0.120528825, y: 0.87784576, z: -0.35501772, w: -0.29803023}
   m_Size:
     m_Target: 0.4723395
     speed: 2
@@ -1228,7 +1228,7 @@ MonoBehaviour:
   m_ShowGizmos: 0
   m_TargetDisplay: 0
   m_ClearColor: {r: 0, g: 0, b: 0, a: 0}
-  m_TargetSize: {x: 1101, y: 516}
+  m_TargetSize: {x: 1080, y: 1920}
   m_TextureFilterMode: 0
   m_TextureHideFlags: 61
   m_RenderIMGUI: 1
@@ -1243,10 +1243,10 @@ MonoBehaviour:
     m_VRangeLocked: 0
     hZoomLockedByDefault: 0
     vZoomLockedByDefault: 0
-    m_HBaseRangeMin: -550.5
-    m_HBaseRangeMax: 550.5
-    m_VBaseRangeMin: -258
-    m_VBaseRangeMax: 258
+    m_HBaseRangeMin: -540
+    m_HBaseRangeMax: 540
+    m_VBaseRangeMin: -960
+    m_VBaseRangeMax: 960
     m_HAllowExceedBaseRangeMin: 1
     m_HAllowExceedBaseRangeMax: 1
     m_VAllowExceedBaseRangeMin: 1
@@ -1266,20 +1266,20 @@ MonoBehaviour:
       y: 21
       width: 1101
       height: 516
-    m_Scale: {x: 1, y: 1}
-    m_Translation: {x: 550.5, y: 258}
+    m_Scale: {x: 0.26875, y: 0.26875}
+    m_Translation: {x: 550.5, y: 257.99997}
     m_MarginLeft: 0
     m_MarginRight: 0
     m_MarginTop: 0
     m_MarginBottom: 0
     m_LastShownAreaInsideMargins:
       serializedVersion: 2
-      x: -550.5
-      y: -258
-      width: 1101
-      height: 516
+      x: -2048.372
+      y: -959.9998
+      width: 4096.744
+      height: 1919.9999
     m_MinimalGUI: 1
-  m_defaultScale: 1
+  m_defaultScale: 0.26875
   m_LastWindowPixelSize: {x: 1101, y: 537}
   m_ClearInEditMode: 1
   m_NoCameraWarning: 1
@@ -1310,7 +1310,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 642
+    y: 587
     width: 1446
     height: 344
   m_SerializedDataModeController:

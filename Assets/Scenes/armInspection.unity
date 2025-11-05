@@ -330,7 +330,6 @@ GameObject:
   - component: {fileID: 269429190}
   - component: {fileID: 269429189}
   - component: {fileID: 269429194}
-  - component: {fileID: 269429195}
   m_Layer: 0
   m_Name: ARCamera
   m_TagString: MainCamera
@@ -482,25 +481,6 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
---- !u!114 &269429195
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 269429188}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee135bbbb6aa7ea428fc4ac97479a13a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rotationText: {fileID: 987918287}
-  huesoBrazos: {fileID: 899130071247382567}
-  huesoBrazos001: {fileID: 712173008215857224}
-  duracionAnimacion: 0.25
-  gyroSmoothSpeed: 5
-  rotationThreshold: 5
-  cooldownTime: 5
 --- !u!1 &555739939
 GameObject:
   m_ObjectHideFlags: 0
@@ -1066,6 +1046,7 @@ GameObject:
   - component: {fileID: 1886056981}
   - component: {fileID: 1886056980}
   - component: {fileID: 1886056982}
+  - component: {fileID: 1886056983}
   m_Layer: 0
   m_Name: ImageTarget
   m_TagString: Untagged
@@ -1130,10 +1111,34 @@ MonoBehaviour:
     m_RotationOrder: 4
   OnTargetFound:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1886056983}
+        m_TargetAssemblyTypeName: GyroRotationWithAnimation, Assembly-CSharp
+        m_MethodName: StartGameProcess
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnTargetLost:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1886056983}
+        m_TargetAssemblyTypeName: GyroRotationWithAnimation, Assembly-CSharp
+        m_MethodName: StopGameProcess
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1886056981
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1180,6 +1185,25 @@ MonoBehaviour:
   mCastedBehaviour: {fileID: 1886056981}
   mMeshFilter: {fileID: 0}
   mMeshRenderer: {fileID: 0}
+--- !u!114 &1886056983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1886056978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee135bbbb6aa7ea428fc4ac97479a13a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationText: {fileID: 987918287}
+  huesoBrazos: {fileID: 899130071247382567}
+  huesoBrazos001: {fileID: 712173008215857224}
+  successWindowDuration: 0.5
+  rotationThreshold: 30
+  duracionAnimacion: 0.25
+  waitBeforeRestart: 2
 --- !u!1 &1888682179
 GameObject:
   m_ObjectHideFlags: 0
