@@ -9,28 +9,22 @@ public class gameData : MonoBehaviour
     [Header("Opponent GameObjects / Image Targets")]
     public GameObject[] opponentGameObjects;
 
-    // Indice del jefe actual
     private int currentOpponent = 0;
 
     void Awake()
     {
-        // Inicializar array
         defeatedOpponents = new bool[opponents];
 
-        // Cargar datos guardados
         for (int i = 0; i < opponents; i++)
         {
             defeatedOpponents[i] = PlayerPrefs.GetInt($"opponent_{i}", 0) == 1;
         }
 
-        // Encontrar el primer jefe no derrotado
         UpdateCurrentOpponent();
 
-        // Actualizar Image Targets
         UpdateActiveTargets();
     }
 
-    // Registrar victoria y avanzar al siguiente jefe
     public void RegisterVictory(int opponentIndex)
     {
         if (opponentIndex >= 0 && opponentIndex < opponents)
@@ -68,7 +62,6 @@ public class gameData : MonoBehaviour
         UpdateActiveTargets();
     }
 
-    // Actualiza currentOpponent al primer jefe no derrotado
     void UpdateCurrentOpponent()
     {
         currentOpponent = 0;
@@ -78,25 +71,22 @@ public class gameData : MonoBehaviour
         }
     }
 
-    // Activa solo el Image Target del jefe que toca
     void UpdateActiveTargets()
     {
         for (int i = 0; i < opponentGameObjects.Length; i++)
         {
             if (i == currentOpponent && !defeatedOpponents[i])
-                opponentGameObjects[i].SetActive(true); // jefe activo
+                opponentGameObjects[i].SetActive(true);
             else
-                opponentGameObjects[i].SetActive(false); // jefe bloqueado o ya pasado
+                opponentGameObjects[i].SetActive(false);
         }
     }
 
-    // Intentar interactuar con un Image Target
     public void TryInteract(int targetIndex)
     {
         if (targetIndex == currentOpponent)
         {
             Debug.Log($"🎯 You can play this boss: {targetIndex + 1}");
-            // Aquí lanzarías la lógica de gameplay de ese jefe
         }
         else if (targetIndex < currentOpponent)
         {
@@ -108,7 +98,6 @@ public class gameData : MonoBehaviour
         }
     }
 
-    // Devuelve el índice del jefe actual
     public int GetCurrentOpponentIndex()
     {
         return currentOpponent;

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class opponentLogic : MonoBehaviour
+public class gameLogic : MonoBehaviour
 {
     public gameData dataScript;
 
@@ -13,13 +13,11 @@ public class opponentLogic : MonoBehaviour
 
     void Start()
     {
-        // Si no hay referencia, buscar automáticamente
         if (dataScript == null)
         {
             dataScript = FindAnyObjectByType<gameData>();
         }
 
-        // Comprobar si el oponente ya está derrotado
         CheckOpponentStatus();
     }
 
