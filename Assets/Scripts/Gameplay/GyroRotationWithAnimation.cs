@@ -127,6 +127,17 @@ public class GyroRotationWithAnimation : MonoBehaviour
         // Solo iniciar si no está ya en marcha
         if (currentGameLoop == null)
         {
+            if (rotationText) rotationText.text = "¡Marca detectada!";
+            // Iniciar el bucle y guardar la referencia
+            currentGameLoop = StartCoroutine(GameLoop());
+        }
+    }
+
+    public void startGame()
+    {
+        // Solo iniciar si no está ya en marcha
+        if (currentGameLoop == null)
+        {
             // Llamamos a CheckOpponentStatus para obtener el estado del oponente
             int status = miGameLogic.CheckOpponentStatus();
             Debug.Log(status);
@@ -135,11 +146,10 @@ public class GyroRotationWithAnimation : MonoBehaviour
             switch (status)
             {
                 case 0:  // Oponente actual
-                    if (rotationText) rotationText.text = "¡Marca detectada!";
-                    if (uiPanelEsperando) uiPanelEsperando.SetActive(false); // Ocultamos el panel de espera si ya estamos listos
 
-                    // Iniciar el bucle y guardar la referencia
-                    currentGameLoop = StartCoroutine(GameLoop());
+                    miGameLogic.ResetRounds();
+
+                    StartGameProcess();
                     break;
 
                 case 1:  // Oponente ya derrotado

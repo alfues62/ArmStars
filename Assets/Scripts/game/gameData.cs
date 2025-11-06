@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using Vuforia;  // Requiere Vuforia Engine
+using Vuforia;
 
 public class gameData : MonoBehaviour
 {
@@ -7,10 +7,12 @@ public class gameData : MonoBehaviour
     public int opponents = 3;
     public bool[] defeatedOpponents;
 
-    [Header("Opponent GameObjects / Image Targets")]
-    public GameObject[] opponentGameObjects; // ImageTargets en orden
+    [Header("Opponent ImageTargets")]
+    public GameObject[] opponentGameObjects; // Asignar los ImageTargets en orden
 
-    private int currentOpponent = -1; // -1 = ninguno detectado
+    private int currentOpponent = -1; // ninguno detectado
+    private int lastDefeatedOpponent = 0;
+
 
     void Awake()
     {
@@ -19,14 +21,14 @@ public class gameData : MonoBehaviour
         RegisterImageTargetEvents();
     }
 
-    // 🔹 Carga el progreso guardado de oponentes derrotados
     private void LoadProgress()
     {
         for (int i = 0; i < opponents; i++)
             defeatedOpponents[i] = PlayerPrefs.GetInt($"opponent_{i}", 0) == 1;
+
+        lastDefeatedOpponent = PlayerPrefs.GetInt("lastDefeatedOpponent", -1);
     }
 
-    // 🔹 Se suscribe a los eventos de detección de cada ImageTarget
     private void RegisterImageTargetEvents()
     {
         for (int i = 0; i < opponentGameObjects.Length; i++)
@@ -34,7 +36,7 @@ public class gameData : MonoBehaviour
             var observer = opponentGameObjects[i].GetComponent<ObserverBehaviour>();
             if (observer != null)
             {
-                int index = i;
+                int index = i; // Captura índice para la lambda
                 observer.OnTargetStatusChanged += (target, status) =>
                 {
                     HandleTargetStatus(index, status);
@@ -43,7 +45,6 @@ public class gameData : MonoBehaviour
         }
     }
 
-    // 🔹 Maneja el estado de cada marca detectada
     private void HandleTargetStatus(int index, TargetStatus status)
     {
         if (status.Status == Status.TRACKED || status.Status == Status.EXTENDED_TRACKED)
@@ -58,25 +59,33 @@ public class gameData : MonoBehaviour
         }
     }
 
-    // 🔹 Devuelve el índice del ImageTarget actualmente detectado
     public int GetCurrentOpponentIndex()
     {
         return currentOpponent;
     }
 
-    // 🔹 Marca un oponente como derrotado
     public void RegisterVictory(int opponentIndex)
     {
         if (opponentIndex < 0 || opponentIndex >= opponents) return;
 
         defeatedOpponents[opponentIndex] = true;
         PlayerPrefs.SetInt($"opponent_{opponentIndex}", 1);
-        PlayerPrefs.Save();
+        int nextOpponentUnlocked = opponentIndex + 1;
 
-        Debug.Log($"✅ Oponente {opponentIndex + 1} derrotado.");
+        // Comprobamos si este es un nuevo récord de progreso
+        if (nextOpponentUnlocked > lastDefeatedOpponent)
+        {
+            PlayerPrefs.SetInt("lastDefeatedOpponent", nextOpponentUnlocked);
+            PlayerPrefs.Save();
+            lastDefeatedOpponent = nextOpponentUnlocked;
+            Debug.Log($"✅ Oponente {opponentIndex} derrotado. Desbloqueado hasta el {nextOpponentUnlocked}.");
+        }
+        else
+        {
+            Debug.Log($"✅ Oponente {opponentIndex} derrotado (de nuevo).");
+        }
     }
 
-    // 🔹 Reinicia el progreso de los oponentes
     public void ResetProgress()
     {
         for (int i = 0; i < opponents; i++)
@@ -84,13 +93,21 @@ public class gameData : MonoBehaviour
 
         PlayerPrefs.Save();
         defeatedOpponents = new bool[opponents];
-        currentOpponent = -1;
+        currentOpponent = 0;
+        lastDefeatedOpponent = 0;
 
         Debug.Log("♻️ Progreso reiniciado.");
     }
-    private void FixedUpdate()
+
+    public int GetLastDefeatedOpponent()
     {
-        Input.GetKeyDown(KeyCode.R);
+        return lastDefeatedOpponent;
+    }
+
+    void Update()
+    {
+        // Detecta si presionan R para reiniciar el progreso
+        if (Input.GetKeyDown(KeyCode.R))
         {
             ResetProgress();
         }

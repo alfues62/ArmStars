@@ -22,35 +22,35 @@ public class gameLogic : MonoBehaviour
             dataScript = FindAnyObjectByType<gameData>();
         }
 
-        opponentIndex = dataScript.GetCurrentOpponentIndex();  // Sincroniza el oponente actual
         int status = CheckOpponentStatus();
 
-        // Puedes usar el valor `status` para hacer algo más adelante en tu código.
-        // Aquí solo lo estamos mostrando por ejemplo.
+        // Puedes usar el valor status para hacer algo más adelante en tu código.
         Debug.Log("Opponent status: " + status);
     }
 
-    // Función que devuelve el estado del oponente actual
+    // Función que devuelve el estado del oponente evaluado
     public int CheckOpponentStatus()
     {
         int currentOpponentIndex = dataScript.GetCurrentOpponentIndex();
+        int lastDefeatedIndex = dataScript.GetLastDefeatedOpponent();
+        Debug.Log("Current: " + currentOpponentIndex + " Last: " + lastDefeatedIndex);
 
-        // Si el oponente ya ha sido derrotado
-        if (opponentIndex < currentOpponentIndex)
+        if (currentOpponentIndex < lastDefeatedIndex)
         {
-            return 1; // Oponente ya derrotado
+            return 1; // Ya derrotado
         }
-        // Si el oponente aún no ha sido desbloqueado
-        else if (opponentIndex > currentOpponentIndex)
+        else if (currentOpponentIndex > lastDefeatedIndex)
         {
-            return 2; // Oponente aún no desbloqueado
+            return 2; // Aún no desbloqueado
         }
-        // Si el oponente es el que toca (actual)
-        else
+        else if (currentOpponentIndex == lastDefeatedIndex)
         {
             return 0; // Es el turno de este oponente
         }
-        }
+
+        return -1; // Estado desconocido
+    }
+
     void UpdateRoundText()
         {
             if (roundText != null)
@@ -103,6 +103,19 @@ public class gameLogic : MonoBehaviour
                 UpdateRoundText();
             }
         }
+    }
+
+    public void ResetRounds()
+    {
+        // Resetea los contadores para el nuevo combate
+        roundsPlayed = 0;
+        roundsWon = 0;
+        bossDefeated = false;
+
+        // Actualiza el texto de la UI para que ponga "Ronda: 0 / 3"
+        UpdateRoundText();
+
+        Debug.Log("--- ¡Contadores de rondas reseteados para un nuevo combate! ---");
     }
 
 }
