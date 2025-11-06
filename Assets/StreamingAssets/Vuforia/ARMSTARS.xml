@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <QCARConfig>
   <Tracking>
+    <ImageTarget name="Alt2OPP2" size="1.000000 1.000000" />
+    <ImageTarget name="AltOPP2" size="1.000000 1.000000" />
     <ImageTarget name="Oponente3" size="1.000000 1.000000" />
     <ImageTarget name="Oponente2" size="1.000000 1.000000" />
     <ImageTarget name="Oponente1" size="1.000000 1.000000" />

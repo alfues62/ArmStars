@@ -18,7 +18,7 @@ public class GyroRotationWithAnimation : MonoBehaviour
     public float[] reactionTimes;
 
     [Header("Configuración de Audio")]
-    public AudioSource AudioSource; 
+    public AudioSource AudioSource;
     public AudioClip countdownClip;
     public AudioClip goClip;
 
@@ -28,9 +28,12 @@ public class GyroRotationWithAnimation : MonoBehaviour
     public GameObject uiPanelVictoria;
     public GameObject[] mesa;
 
-    [Header("Huesos a Rotar")]
-    public Transform huesoBrazos;
-    public Transform huesoBrazos001;
+    // --- CAMBIO: Reemplazamos los Transforms individuales por arrays ---
+    // Asegúrate de que el tamaño de estos arrays coincida con el número de oponentes (ej: 3)
+    // y que el orden sea el mismo que el del array 'mesa'.
+    [Header("Huesos a Rotar (Arrays)")]
+    public Transform[] huesosBrazos_Array;
+    public Transform[] huesosBrazos001_Array;
 
     [Header("Configuración del Juego")]
     public float successWindowDuration = 0.5f; // Ventana de 0.5 seg para acertar
@@ -42,9 +45,13 @@ public class GyroRotationWithAnimation : MonoBehaviour
     private bool isAnimating = false;
     private bool playerTiltedLeft = false;
 
-    // --- Variables de Estado (Guardaremos las 3 posiciones) ---
-    private Quaternion rotOriginalBrazos, rotOriginalBrazos001;
-    private Vector3 posOriginalBrazos, posOriginalBrazos001;
+    // --- CAMBIO: Guardaremos arrays de las posiciones originales ---
+    private Quaternion[] rotOriginalBrazos_Array;
+    private Vector3[] posOriginalBrazos_Array;
+    private Quaternion[] rotOriginalBrazos001_Array;
+    private Vector3[] posOriginalBrazos001_Array;
+
+    // --- Variables de Estado (LAS POSICIONES TARGET SON LAS MISMAS PARA TODOS) ---
     private Vector3 targetPosBrazo_Success, targetPosBrazo001_Success; // Izquierda
     private Quaternion targetRotBrazo_Success, targetRotBrazo001_Success; // Izquierda
     private Vector3 targetPosBrazo_Fail, targetPosBrazo001_Fail; // Derecha
@@ -55,11 +62,12 @@ public class GyroRotationWithAnimation : MonoBehaviour
 
     // Referencia a la corutina del juego para poder pararla
     private Coroutine currentGameLoop = null;
+    private bool isGameWon = false;
 
     void Start()
     {
-
         miGameLogic = FindAnyObjectByType<gameLogic>();
+
         // Activar giroscopio
         if (SystemInfo.supportsGyroscope)
         {
@@ -71,19 +79,41 @@ public class GyroRotationWithAnimation : MonoBehaviour
             gyroEnabled = false;
         }
 
-        // --- Guardar Estado 1: REPOSO (Estable) ---
-        if (huesoBrazos)
+        // --- CAMBIO: Guardar Estado 1: REPOSO (Iterando sobre los arrays) ---
+        if (huesosBrazos_Array != null && huesosBrazos001_Array != null &&
+            huesosBrazos_Array.Length == huesosBrazos001_Array.Length)
         {
-            posOriginalBrazos = huesoBrazos.localPosition;
-            rotOriginalBrazos = huesoBrazos.localRotation;
+            int numArmSets = huesosBrazos_Array.Length;
+
+            // Inicializar los arrays de estado
+            posOriginalBrazos_Array = new Vector3[numArmSets];
+            rotOriginalBrazos_Array = new Quaternion[numArmSets];
+            posOriginalBrazos001_Array = new Vector3[numArmSets];
+            rotOriginalBrazos001_Array = new Quaternion[numArmSets];
+
+            // Rellenar los arrays con las posiciones/rotaciones originales
+            for (int i = 0; i < numArmSets; i++)
+            {
+                if (huesosBrazos_Array[i])
+                {
+                    posOriginalBrazos_Array[i] = huesosBrazos_Array[i].localPosition;
+                    rotOriginalBrazos_Array[i] = huesosBrazos_Array[i].localRotation;
+                }
+                if (huesosBrazos001_Array[i])
+                {
+                    posOriginalBrazos001_Array[i] = huesosBrazos001_Array[i].localPosition;
+                    rotOriginalBrazos001_Array[i] = huesosBrazos001_Array[i].localRotation;
+                }
+            }
         }
-        if (huesoBrazos001)
+        else
         {
-            posOriginalBrazos001 = huesoBrazos001.localPosition;
-            rotOriginalBrazos001 = huesoBrazos001.localRotation;
+            Debug.LogError("GyroRotation: Los arrays 'huesosBrazos_Array' y 'huesosBrazos001_Array' no están asignados o tienen tamaños diferentes.");
         }
 
+
         // --- Definir Estado 2: ÉXITO (IZQUIERDA) ---
+        // (Estos valores son constantes, como en tu script original)
         targetPosBrazo_Success = new Vector3(-1.862645e-08f, 0.01437014f, 9.220095e-08f);
         targetRotBrazo_Success = Quaternion.Euler(-26.949f, 79.839f, 61.002f);
         targetPosBrazo001_Success = new Vector3(-7.450581e-09f, 0.01437012f, 1.629815e-08f);
@@ -97,8 +127,6 @@ public class GyroRotationWithAnimation : MonoBehaviour
 
         // Ya NO iniciamos el bucle aquí. Esperamos la señal de Vuforia.
         if (rotationText) rotationText.text = "Apunta a la marca para empezar...";
-
-
     }
 
     void Update()
@@ -106,7 +134,7 @@ public class GyroRotationWithAnimation : MonoBehaviour
         // El input se sigue detectando siempre,
         // pero solo importa cuando el estado es 'Listening'
         playerTiltedLeft = false;
-        
+
         if (gyroEnabled)
         {
             if (Input.gyro.rotationRateUnbiased.z * Mathf.Rad2Deg > rotationThreshold)
@@ -120,8 +148,10 @@ public class GyroRotationWithAnimation : MonoBehaviour
             playerTiltedLeft = true;
         }
 
-        if(miGameLogic.opponentDefeated == true)
+        if (miGameLogic.opponentDefeated == true && !isGameWon)
         {
+            isGameWon = true;
+
             StopGameProcess();
             // Cuando Ganas UI
             mesa[miGameLogic.dataScript.GetCurrentOpponentIndex()].SetActive(false);
@@ -136,6 +166,8 @@ public class GyroRotationWithAnimation : MonoBehaviour
         {
             if (rotationText) rotationText.text = "¡Marca detectada!";
             // Iniciar el bucle y guardar la referencia
+            mesa[miGameLogic.dataScript.GetCurrentOpponentIndex()].SetActive(true);
+            uiPanelVictoria.SetActive(false);
             currentGameLoop = StartCoroutine(GameLoop());
         }
     }
@@ -155,6 +187,7 @@ public class GyroRotationWithAnimation : MonoBehaviour
                 case 0:  // Oponente actual
                     miGameLogic.opponentDefeated = false;
                     miGameLogic.ResetRounds();
+                    isGameWon = false;
                     StartGameProcess();
                     break;
 
@@ -170,7 +203,6 @@ public class GyroRotationWithAnimation : MonoBehaviour
                     // Mostrar el panel de oponente no disponible
                     if (uiPanelOponenteNoDisponible) uiPanelOponenteNoDisponible.SetActive(true);
                     if (mesa[miGameLogic.dataScript.GetCurrentOpponentIndex()]) mesa[miGameLogic.dataScript.GetCurrentOpponentIndex()].SetActive(false);
-
                     break;
 
                 default:
@@ -191,9 +223,21 @@ public class GyroRotationWithAnimation : MonoBehaviour
             currentState = GameState.Idle;
             isAnimating = false;
 
+            // --- CAMBIO: Obtener el índice actual para saber qué huesos resetear ---
+            int currentIndex = miGameLogic.dataScript.GetCurrentOpponentIndex();
+
             // Forzar el reseteo de los brazos a su estado original
             StopAllCoroutines(); // Detener cualquier animación en curso (p.ej. DoRotation_Fail)
-            StartCoroutine(AnimateToTarget(posOriginalBrazos, rotOriginalBrazos, posOriginalBrazos001, rotOriginalBrazos001));
+
+            // --- CAMBIO: Animar al estado original del índice actual ---
+            if (currentIndex >= 0 && currentIndex < posOriginalBrazos_Array.Length)
+            {
+                StartCoroutine(AnimateToTarget(
+                    currentIndex,
+                    posOriginalBrazos_Array[currentIndex], rotOriginalBrazos_Array[currentIndex],
+                    posOriginalBrazos001_Array[currentIndex], rotOriginalBrazos001_Array[currentIndex]
+                ));
+            }
 
             if (rotationText) rotationText.text = "Marca perdida. Apunta de nuevo...";
         }
@@ -204,8 +248,12 @@ public class GyroRotationWithAnimation : MonoBehaviour
     {
         while (true) // Este bucle ahora se repite solo mientras la corutina esté activa
         {
+            // --- CAMBIO: Obtener el índice del oponente actual ---
+            int currentIndex = miGameLogic.dataScript.GetCurrentOpponentIndex();
+
             // Determinar el tiempo de reacción según el enemigo actual
-            float tiempoReaccion = GetReactionTimeForEnemy(miGameLogic.dataScript.GetCurrentOpponentIndex());
+            float tiempoReaccion = GetReactionTimeForEnemy(currentIndex);
+
             // --- 1. FASE DE ESPERA (IDLE) ---
             currentState = GameState.Idle;
             rotationText.text = "Prepárate...";
@@ -224,7 +272,6 @@ public class GyroRotationWithAnimation : MonoBehaviour
 
             // Reproducir el sonido de "¡GO!".
             PlayAudioClip(goClip);
-
 
             bool success = false;
             float windowTimer = 0f;
@@ -246,7 +293,8 @@ public class GyroRotationWithAnimation : MonoBehaviour
             if (success)
             {
                 rotationText.text = "¡BIEN HECHO!";
-                yield return StartCoroutine(DoRotation_Success());
+                // --- CAMBIO: Pasar el índice a la corutina de animación ---
+                yield return StartCoroutine(DoRotation_Success(currentIndex));
                 if (miGameLogic != null)
                 {
                     miGameLogic.WinRound();
@@ -255,7 +303,8 @@ public class GyroRotationWithAnimation : MonoBehaviour
             else
             {
                 rotationText.text = "¡FALLO!";
-                yield return StartCoroutine(DoRotation_Fail());
+                // --- CAMBIO: Pasar el índice a la corutina de animación ---
+                yield return StartCoroutine(DoRotation_Fail(currentIndex));
                 if (miGameLogic != null)
                 {
                     miGameLogic.LoseRound();
@@ -264,29 +313,43 @@ public class GyroRotationWithAnimation : MonoBehaviour
         }
     }
 
-    // --- Coroutine para la animación de ÉXITO (IZQUIERDA) ---
-    IEnumerator DoRotation_Success()
+    // --- CAMBIO: La corutina ahora acepta un 'index' ---
+    IEnumerator DoRotation_Success(int index)
     {
         isAnimating = true;
-        yield return AnimateToTarget(targetPosBrazo_Success, targetRotBrazo_Success, targetPosBrazo001_Success, targetRotBrazo001_Success);
+        // Animar a la posición de ÉXITO
+        yield return AnimateToTarget(index, targetPosBrazo_Success, targetRotBrazo_Success, targetPosBrazo001_Success, targetRotBrazo001_Success);
         yield return new WaitForSeconds(0.1f);
-        yield return AnimateToTarget(posOriginalBrazos, rotOriginalBrazos, posOriginalBrazos001, rotOriginalBrazos001);
+        // Animar de vuelta al REPOSO original de ESE índice
+        yield return AnimateToTarget(index, posOriginalBrazos_Array[index], rotOriginalBrazos_Array[index], posOriginalBrazos001_Array[index], rotOriginalBrazos001_Array[index]);
         isAnimating = false;
     }
 
-    // --- Coroutine para la animación de FALLO (DERECHA) ---
-    IEnumerator DoRotation_Fail()
+    // --- CAMBIO: La corutina ahora acepta un 'index' ---
+    IEnumerator DoRotation_Fail(int index)
     {
         isAnimating = true;
-        yield return AnimateToTarget(targetPosBrazo_Fail, targetRotBrazo_Fail, targetPosBrazo001_Fail, targetRotBrazo001_Fail);
+        // Animar a la posición de FALLO
+        yield return AnimateToTarget(index, targetPosBrazo_Fail, targetRotBrazo_Fail, targetPosBrazo001_Fail, targetRotBrazo001_Fail);
         yield return new WaitForSeconds(0.1f);
-        yield return AnimateToTarget(posOriginalBrazos, rotOriginalBrazos, posOriginalBrazos001, rotOriginalBrazos001);
+        // Animar de vuelta al REPOSO original de ESE índice
+        yield return AnimateToTarget(index, posOriginalBrazos_Array[index], rotOriginalBrazos_Array[index], posOriginalBrazos001_Array[index], rotOriginalBrazos001_Array[index]);
         isAnimating = false;
     }
 
-    // --- Coroutine genérica que hace la animación (para no repetir código) ---
-    IEnumerator AnimateToTarget(Vector3 p1_target, Quaternion r1_target, Vector3 p2_target, Quaternion r2_target)
+    // --- CAMBIO: La corutina genérica ahora acepta un 'index' ---
+    IEnumerator AnimateToTarget(int index, Vector3 p1_target, Quaternion r1_target, Vector3 p2_target, Quaternion r2_target)
     {
+        // --- CAMBIO: Obtener los huesos correctos del array usando el índice ---
+        if (index < 0 || index >= huesosBrazos_Array.Length)
+        {
+            Debug.LogError($"Índice de animación ({index}) fuera de rango.");
+            yield break;
+        }
+        Transform huesoBrazos = huesosBrazos_Array[index];
+        Transform huesoBrazos001 = huesosBrazos001_Array[index];
+
+        // --- El resto de la lógica es idéntica a tu script original ---
         float tiempoPasado = 0;
 
         Vector3 p1_start = huesoBrazos.localPosition;
@@ -300,7 +363,7 @@ public class GyroRotationWithAnimation : MonoBehaviour
 
             if (huesoBrazos)
             {
-                huesoBrazos.localPosition = Vector3.Lerp(p1_start, p1_target, t);   
+                huesoBrazos.localPosition = Vector3.Lerp(p1_start, p1_target, t);
                 huesoBrazos.localRotation = Quaternion.Slerp(r1_start, r1_target, t);
             }
             if (huesoBrazos001)
@@ -316,6 +379,7 @@ public class GyroRotationWithAnimation : MonoBehaviour
         if (huesoBrazos) { huesoBrazos.localPosition = p1_target; huesoBrazos.localRotation = r1_target; }
         if (huesoBrazos001) { huesoBrazos001.localPosition = p2_target; huesoBrazos001.localRotation = r2_target; }
     }
+
     void PlayAudioClip(AudioClip clip)
     {
         if (!AudioSource.isPlaying)
@@ -323,17 +387,51 @@ public class GyroRotationWithAnimation : MonoBehaviour
             AudioSource.PlayOneShot(clip);
         }
     }
+
     float GetReactionTimeForEnemy(int enemyIndex)
     {
-        // Asegúrate de que el índice no se salga de los límites del array
-        if (enemyIndex >= 0 && enemyIndex < reactionTimes.Length)
+        // --- Comprobación de seguridad ---
+        // Asegurarse de que el array tenga suficientes elementos para tu lógica (al menos 6 en este caso)
+        if (reactionTimes == null || reactionTimes.Length < 6)
         {
-            return reactionTimes[enemyIndex];  // Devuelve el tiempo de reacción basado en el índice
+            Debug.LogError("El array 'reactionTimes' no está configurado o no tiene suficientes valores (se necesitan al menos 6).");
+            return 1.0f; // Valor por defecto
         }
-        else
+
+        float minTime;
+        float maxTime;
+
+        // Usamos un switch para asignar el rango según el índice del enemigo
+        switch (enemyIndex)
         {
-            // Si el índice no es válido, retorna un valor por defecto
-            return 1.0f;  // Tiempo por defecto si no se encuentra el índice
+            case 0:  // Enemigo Fácil (usa los índices 0 y 1)
+                minTime = reactionTimes[0];
+                maxTime = reactionTimes[1];
+                break;
+
+            case 1:  // Enemigo Intermedio (usa los índices 2 y 3)
+                minTime = reactionTimes[2];
+                maxTime = reactionTimes[3];
+                break;
+
+            case 2:  // Enemigo Difícil (usa los índices 4 y 5)
+                minTime = reactionTimes[4];
+                maxTime = reactionTimes[5];
+                break;
+
+            default:
+                // Un "fallback" por si el índice es inesperado (ej: 3 o más)
+                Debug.LogWarning($"Índice de enemigo no reconocido: {enemyIndex}. Usando valores por defecto.");
+                minTime = 1.0f;
+                maxTime = 1.0f;
+                break;
         }
+
+        // --- Devolver el valor aleatorio ---
+
+        // Random.Range(float, float) devuelve un valor aleatorio entre los dos números.
+        // Usamos Mathf.Min y Mathf.Max para asegurarnos de que funciona 
+        // incluso si pones el valor más alto primero en el array.
+        return Random.Range(Mathf.Min(minTime, maxTime), Mathf.Max(minTime, maxTime));
     }
 }
