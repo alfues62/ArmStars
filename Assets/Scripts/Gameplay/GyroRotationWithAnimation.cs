@@ -25,7 +25,7 @@ public class GyroRotationWithAnimation : MonoBehaviour
     [Header("UI")]
     public GameObject uiPanelOponenteDerrotado;  // Panel que muestra el mensaje si el oponente ya ha sido derrotado
     public GameObject uiPanelOponenteNoDisponible;  // Panel que muestra el mensaje si el oponente no está disponible
-    public GameObject uiPanelEsperando;
+    public GameObject[] mesa;
 
     [Header("Huesos a Rotar")]
     public Transform huesoBrazos;
@@ -156,21 +156,14 @@ public class GyroRotationWithAnimation : MonoBehaviour
                     if (rotationText) rotationText.text = "Este oponente ya ha sido derrotado. ¡Prueba otro!";
                     // Mostrar el panel de oponente derrotado
                     if (uiPanelOponenteDerrotado) uiPanelOponenteDerrotado.SetActive(true);
-
-                    // Asegurarnos de que los otros paneles no estén activos
-                    if (uiPanelOponenteNoDisponible) uiPanelOponenteNoDisponible.SetActive(false);
-                    if (uiPanelEsperando) uiPanelEsperando.SetActive(false);
-
+                    if (mesa[miGameLogic.dataScript.GetCurrentOpponentIndex()]) mesa[miGameLogic.dataScript.GetCurrentOpponentIndex()].SetActive(false);
                     break;
 
                 case 2:  // Oponente aún no desbloqueado
                     if (rotationText) rotationText.text = "Este oponente aún no está disponible.";
                     // Mostrar el panel de oponente no disponible
                     if (uiPanelOponenteNoDisponible) uiPanelOponenteNoDisponible.SetActive(true);
-
-                    // Asegurarnos de que los otros paneles no estén activos
-                    if (uiPanelOponenteDerrotado) uiPanelOponenteDerrotado.SetActive(false);
-                    if (uiPanelEsperando) uiPanelEsperando.SetActive(false);
+                    if (mesa[miGameLogic.dataScript.GetCurrentOpponentIndex()]) mesa[miGameLogic.dataScript.GetCurrentOpponentIndex()].SetActive(false);
 
                     break;
 
@@ -214,7 +207,7 @@ public class GyroRotationWithAnimation : MonoBehaviour
 
             // --- 2. FASE DE CUENTA ATRÁS (COUNTDOWN) ---
             currentState = GameState.Countdown;
-            rotationText.text = "3";
+            rotationText.text = "3,2,1...";
             PlayAudioClip(countdownClip);
             yield return new WaitForSeconds(countdownClip.length);
             yield return new WaitForSeconds(Random.Range(randomWaitTimeMin, randomWaitTimeMax));

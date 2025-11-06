@@ -694,7 +694,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3915110404400600405, guid: ff5eafc55c5db7f409a844a3c48e18e8,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 298401206}
   m_SourcePrefab: {fileID: 100100000, guid: ff5eafc55c5db7f409a844a3c48e18e8, type: 3}
 --- !u!114 &298401204 stripped
 MonoBehaviour:
@@ -702,12 +706,53 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 298401203}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 298401205}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 61d21d5ce97d8f544af6fe6618b60743, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &298401205 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3915110404400600405, guid: ff5eafc55c5db7f409a844a3c48e18e8,
+    type: 3}
+  m_PrefabInstance: {fileID: 298401203}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &298401206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 298401205}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee135bbbb6aa7ea428fc4ac97479a13a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationText: {fileID: 987918287}
+  miGameLogic: {fileID: 298401204}
+  randomWaitTimeMin: 1
+  randomWaitTimeMax: 2
+  reactionTimes:
+  - 1
+  - 1
+  - 1
+  AudioSource: {fileID: 1886056984}
+  countdownClip: {fileID: 8300000, guid: d68d378c364a3654da3f2fb7176e343e, type: 3}
+  goClip: {fileID: 8300000, guid: d5696c969940bc54fb91c5a91e9defdd, type: 3}
+  uiPanelOponenteDerrotado: {fileID: 0}
+  uiPanelOponenteNoDisponible: {fileID: 0}
+  mesa:
+  - {fileID: 3014704321512450920}
+  - {fileID: 1134207590}
+  - {fileID: 1345743493}
+  huesoBrazos: {fileID: 899130071247382567}
+  huesoBrazos001: {fileID: 712173008215857224}
+  successWindowDuration: 0.5
+  rotationThreshold: 30
+  duracionAnimacion: 0.25
+  waitBeforeRestart: 2
 --- !u!1 &314283697
 GameObject:
   m_ObjectHideFlags: 0
@@ -719,7 +764,6 @@ GameObject:
   - component: {fileID: 314283701}
   - component: {fileID: 314283700}
   - component: {fileID: 314283699}
-  - component: {fileID: 314283702}
   - component: {fileID: 314283703}
   - component: {fileID: 314283704}
   m_Layer: 0
@@ -770,7 +814,7 @@ MonoBehaviour:
   OnTargetFound:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 314283702}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GyroRotationWithAnimation, Assembly-CSharp
         m_MethodName: startGame
         m_Mode: 1
@@ -785,7 +829,7 @@ MonoBehaviour:
   OnTargetLost:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 314283702}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GyroRotationWithAnimation, Assembly-CSharp
         m_MethodName: StopGameProcess
         m_Mode: 1
@@ -840,38 +884,6 @@ Transform:
   - {fileID: 1134207589}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &314283702
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 314283697}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee135bbbb6aa7ea428fc4ac97479a13a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rotationText: {fileID: 987918287}
-  miGameLogic: {fileID: 298401204}
-  randomWaitTimeMin: 1
-  randomWaitTimeMax: 3
-  reactionTimes:
-  - 1
-  - 1
-  - 1
-  AudioSource: {fileID: 314283703}
-  countdownClip: {fileID: 8300000, guid: d68d378c364a3654da3f2fb7176e343e, type: 3}
-  goClip: {fileID: 8300000, guid: d5696c969940bc54fb91c5a91e9defdd, type: 3}
-  uiPanelOponenteDerrotado: {fileID: 0}
-  uiPanelOponenteNoDisponible: {fileID: 0}
-  uiPanelEsperando: {fileID: 0}
-  huesoBrazos: {fileID: 1134207591}
-  huesoBrazos001: {fileID: 1134207590}
-  successWindowDuration: 0.5
-  rotationThreshold: 30
-  duracionAnimacion: 0.25
-  waitBeforeRestart: 2
 --- !u!82 &314283703
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1493,15 +1505,9 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1134207588}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &1134207590 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3452415427588697191, guid: f4274f06f725d2744a16c635b62330da,
-    type: 3}
-  m_PrefabInstance: {fileID: 1134207588}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &1134207591 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1487355401840293561, guid: f4274f06f725d2744a16c635b62330da,
+--- !u!1 &1134207590 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2408852228713797758, guid: f4274f06f725d2744a16c635b62330da,
     type: 3}
   m_PrefabInstance: {fileID: 1134207588}
   m_PrefabAsset: {fileID: 0}
@@ -1584,15 +1590,9 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1345743491}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &1345743493 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3452415427588697191, guid: f4274f06f725d2744a16c635b62330da,
-    type: 3}
-  m_PrefabInstance: {fileID: 1345743491}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &1345743494 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1487355401840293561, guid: f4274f06f725d2744a16c635b62330da,
+--- !u!1 &1345743493 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2408852228713797758, guid: f4274f06f725d2744a16c635b62330da,
     type: 3}
   m_PrefabInstance: {fileID: 1345743491}
   m_PrefabAsset: {fileID: 0}
@@ -1734,7 +1734,6 @@ GameObject:
   - component: {fileID: 1886056979}
   - component: {fileID: 1886056981}
   - component: {fileID: 1886056980}
-  - component: {fileID: 1886056983}
   - component: {fileID: 1886056984}
   - component: {fileID: 1886056985}
   m_Layer: 0
@@ -1802,7 +1801,7 @@ MonoBehaviour:
   OnTargetFound:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1886056983}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GyroRotationWithAnimation, Assembly-CSharp
         m_MethodName: startGame
         m_Mode: 1
@@ -1817,7 +1816,7 @@ MonoBehaviour:
   OnTargetLost:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1886056983}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GyroRotationWithAnimation, Assembly-CSharp
         m_MethodName: StopGameProcess
         m_Mode: 1
@@ -1856,38 +1855,6 @@ MonoBehaviour:
   mTrackingOptimization: 0
   mTrackingOptimizationNeedsUpgrade: 0
   mPreview: {fileID: 1886056985}
---- !u!114 &1886056983
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1886056978}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee135bbbb6aa7ea428fc4ac97479a13a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rotationText: {fileID: 987918287}
-  miGameLogic: {fileID: 298401204}
-  randomWaitTimeMin: 1
-  randomWaitTimeMax: 2
-  reactionTimes:
-  - 1
-  - 1
-  - 1
-  AudioSource: {fileID: 1886056984}
-  countdownClip: {fileID: 8300000, guid: d68d378c364a3654da3f2fb7176e343e, type: 3}
-  goClip: {fileID: 8300000, guid: d5696c969940bc54fb91c5a91e9defdd, type: 3}
-  uiPanelOponenteDerrotado: {fileID: 0}
-  uiPanelOponenteNoDisponible: {fileID: 0}
-  uiPanelEsperando: {fileID: 0}
-  huesoBrazos: {fileID: 899130071247382567}
-  huesoBrazos001: {fileID: 712173008215857224}
-  successWindowDuration: 0.5
-  rotationThreshold: 30
-  duracionAnimacion: 0.25
-  waitBeforeRestart: 2
 --- !u!82 &1886056984
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2389,7 +2356,6 @@ GameObject:
   - component: {fileID: 1993956366}
   - component: {fileID: 1993956365}
   - component: {fileID: 1993956364}
-  - component: {fileID: 1993956367}
   - component: {fileID: 1993956368}
   - component: {fileID: 1993956369}
   m_Layer: 0
@@ -2440,7 +2406,7 @@ MonoBehaviour:
   OnTargetFound:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1993956367}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GyroRotationWithAnimation, Assembly-CSharp
         m_MethodName: startGame
         m_Mode: 1
@@ -2455,7 +2421,7 @@ MonoBehaviour:
   OnTargetLost:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1993956367}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GyroRotationWithAnimation, Assembly-CSharp
         m_MethodName: StopGameProcess
         m_Mode: 1
@@ -2510,38 +2476,6 @@ Transform:
   - {fileID: 1345743492}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1993956367
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1993956362}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee135bbbb6aa7ea428fc4ac97479a13a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rotationText: {fileID: 987918287}
-  miGameLogic: {fileID: 298401204}
-  randomWaitTimeMin: 1
-  randomWaitTimeMax: 3
-  reactionTimes:
-  - 1
-  - 1
-  - 1
-  AudioSource: {fileID: 1993956368}
-  countdownClip: {fileID: 8300000, guid: d68d378c364a3654da3f2fb7176e343e, type: 3}
-  goClip: {fileID: 8300000, guid: d5696c969940bc54fb91c5a91e9defdd, type: 3}
-  uiPanelOponenteDerrotado: {fileID: 0}
-  uiPanelOponenteNoDisponible: {fileID: 0}
-  uiPanelEsperando: {fileID: 0}
-  huesoBrazos: {fileID: 1345743494}
-  huesoBrazos001: {fileID: 1345743493}
-  successWindowDuration: 0.5
-  rotationThreshold: 30
-  duracionAnimacion: 0.25
-  waitBeforeRestart: 2
 --- !u!82 &1993956368
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2744,6 +2678,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f4274f06f725d2744a16c635b62330da, type: 3}
+--- !u!1 &3014704321512450920 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2408852228713797758, guid: f4274f06f725d2744a16c635b62330da,
+    type: 3}
+  m_PrefabInstance: {fileID: 3014704321512450919}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &3198168649434148276
 GameObject:
   m_ObjectHideFlags: 0
