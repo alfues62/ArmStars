@@ -14,6 +14,7 @@ public class gameLogic : MonoBehaviour
     private int roundsWon = 0;
     private int roundsPlayed = 0;
     private bool bossDefeated = false;
+    public bool opponentDefeated = false;
 
     void Start()
     {
@@ -93,6 +94,7 @@ public class gameLogic : MonoBehaviour
                 bossDefeated = true;
                 opponentIndex = dataScript.GetCurrentOpponentIndex();
                 dataScript.RegisterVictory(opponentIndex);
+                opponentDefeated = true;
             }
             else
             {
@@ -104,7 +106,6 @@ public class gameLogic : MonoBehaviour
             }
         }
     }
-
     public void ResetRounds()
     {
         // Resetea los contadores para el nuevo combate

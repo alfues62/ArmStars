@@ -743,6 +743,7 @@ MonoBehaviour:
   goClip: {fileID: 8300000, guid: d5696c969940bc54fb91c5a91e9defdd, type: 3}
   uiPanelOponenteDerrotado: {fileID: 0}
   uiPanelOponenteNoDisponible: {fileID: 0}
+  uiPanelVictoria: {fileID: 0}
   mesa:
   - {fileID: 3014704321512450920}
   - {fileID: 1134207590}
@@ -814,7 +815,7 @@ MonoBehaviour:
   OnTargetFound:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 298401206}
         m_TargetAssemblyTypeName: GyroRotationWithAnimation, Assembly-CSharp
         m_MethodName: startGame
         m_Mode: 1
@@ -829,7 +830,7 @@ MonoBehaviour:
   OnTargetLost:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 298401206}
         m_TargetAssemblyTypeName: GyroRotationWithAnimation, Assembly-CSharp
         m_MethodName: StopGameProcess
         m_Mode: 1
@@ -1801,7 +1802,7 @@ MonoBehaviour:
   OnTargetFound:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 298401206}
         m_TargetAssemblyTypeName: GyroRotationWithAnimation, Assembly-CSharp
         m_MethodName: startGame
         m_Mode: 1
@@ -1816,7 +1817,7 @@ MonoBehaviour:
   OnTargetLost:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 298401206}
         m_TargetAssemblyTypeName: GyroRotationWithAnimation, Assembly-CSharp
         m_MethodName: StopGameProcess
         m_Mode: 1
@@ -2406,7 +2407,7 @@ MonoBehaviour:
   OnTargetFound:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 298401206}
         m_TargetAssemblyTypeName: GyroRotationWithAnimation, Assembly-CSharp
         m_MethodName: startGame
         m_Mode: 1
@@ -2421,7 +2422,7 @@ MonoBehaviour:
   OnTargetLost:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 298401206}
         m_TargetAssemblyTypeName: GyroRotationWithAnimation, Assembly-CSharp
         m_MethodName: StopGameProcess
         m_Mode: 1

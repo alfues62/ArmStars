@@ -25,6 +25,7 @@ public class GyroRotationWithAnimation : MonoBehaviour
     [Header("UI")]
     public GameObject uiPanelOponenteDerrotado;  // Panel que muestra el mensaje si el oponente ya ha sido derrotado
     public GameObject uiPanelOponenteNoDisponible;  // Panel que muestra el mensaje si el oponente no está disponible
+    public GameObject uiPanelVictoria;
     public GameObject[] mesa;
 
     [Header("Huesos a Rotar")]
@@ -119,7 +120,12 @@ public class GyroRotationWithAnimation : MonoBehaviour
             playerTiltedLeft = true;
         }
 
-        
+        if(miGameLogic.opponentDefeated == true)
+        {
+            StopGameProcess();
+            mesa[miGameLogic.dataScript.GetCurrentOpponentIndex()].SetActive(false);
+            uiPanelVictoria.SetActive(true);
+        }
     }
 
     public void StartGameProcess()
@@ -146,9 +152,8 @@ public class GyroRotationWithAnimation : MonoBehaviour
             switch (status)
             {
                 case 0:  // Oponente actual
-
+                    miGameLogic.opponentDefeated = false;
                     miGameLogic.ResetRounds();
-
                     StartGameProcess();
                     break;
 
