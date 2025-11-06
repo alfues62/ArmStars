@@ -266,6 +266,33 @@ public class GyroRotationWithAnimation : MonoBehaviour
             yield return new WaitForSeconds(countdownClip.length);
             yield return new WaitForSeconds(Random.Range(randomWaitTimeMin, randomWaitTimeMax));
 
+            bool falseStart = false;
+            float randomWaitTime = Random.Range(randomWaitTimeMin, randomWaitTimeMax);
+            float falseStartTimer = 0f;
+
+            while (falseStartTimer < randomWaitTime)
+            {
+                if (playerTiltedLeft)
+                {
+                    falseStart = true;
+                    break;
+                }
+                falseStartTimer += Time.deltaTime;
+                yield return null;
+            }
+
+            if (falseStart)
+            {
+                currentState = GameState.Animating; // Pasamos a animar la derrota
+                rotationText.text = "❌ ¡SALIDA EN FALSO!";
+
+                yield return StartCoroutine(DoRotation_Fail(currentIndex));
+                if (miGameLogic != null)
+                {
+                    miGameLogic.LoseRound();
+                }
+                continue; // Vuelve al inicio del bucle while(true)
+            }
             // --- 3. FASE DE ESCUCHA (LISTENING) ---
             currentState = GameState.Listening;
             rotationText.text = "¡GO!";

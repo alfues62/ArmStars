@@ -26,7 +26,13 @@ public class gameData : MonoBehaviour
         for (int i = 0; i < opponents; i++)
             defeatedOpponents[i] = PlayerPrefs.GetInt($"opponent_{i}", 0) == 1;
 
-        lastDefeatedOpponent = PlayerPrefs.GetInt("lastDefeatedOpponent", -1);
+        // Aquí se recalcula lastDefeatedOpponent a partir de los booleanos guardados.
+        lastDefeatedOpponent = 0;
+        for (int i = 0; i < opponents; i++)
+        {
+            if (defeatedOpponents[i])
+                lastDefeatedOpponent = i + 1;
+        }
     }
 
     private void RegisterImageTargetEvents()
@@ -70,18 +76,17 @@ public class gameData : MonoBehaviour
 
         defeatedOpponents[opponentIndex] = true;
         PlayerPrefs.SetInt($"opponent_{opponentIndex}", 1);
-        int nextOpponentUnlocked = opponentIndex + 1;
+        PlayerPrefs.Save();
 
-        // Comprobamos si este es un nuevo récord de progreso
+        int nextOpponentUnlocked = opponentIndex + 1;
         if (nextOpponentUnlocked > lastDefeatedOpponent)
         {
-            PlayerPrefs.SetInt("lastDefeatedOpponent", nextOpponentUnlocked);
-            PlayerPrefs.Save();
-            lastDefeatedOpponent = nextOpponentUnlocked;
-            Debug.Log($"✅ Oponente {opponentIndex} derrotado. Desbloqueado hasta el {nextOpponentUnlocked}.");
+            lastDefeatedOpponent = nextOpponentUnlocked; // ¡Aquí se actualiza la variable en RAM!
+            Debug.Log($"✅ Oponente {opponentIndex} derrotado. Progreso actualizado a {lastDefeatedOpponent}.");
         }
         else
         {
+            // Esto cubre el caso en que se derrota a un oponente ya derrotado.
             Debug.Log($"✅ Oponente {opponentIndex} derrotado (de nuevo).");
         }
         CheckForAllDefeated();
@@ -114,7 +119,7 @@ public class gameData : MonoBehaviour
 
         PlayerPrefs.Save();
         defeatedOpponents = new bool[opponents];
-        currentOpponent = 0;
+        currentOpponent = -1;
         lastDefeatedOpponent = 0;
 
         Debug.Log("♻️ Progreso reiniciado.");
@@ -123,14 +128,5 @@ public class gameData : MonoBehaviour
     public int GetLastDefeatedOpponent()
     {
         return lastDefeatedOpponent;
-    }
-
-    void Update()
-    {
-        // Detecta si presionan R para reiniciar el progreso
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            ResetProgress();
-        }
     }
 }
