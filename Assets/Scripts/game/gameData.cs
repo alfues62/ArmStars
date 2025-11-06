@@ -84,6 +84,27 @@ public class gameData : MonoBehaviour
         {
             Debug.Log($"✅ Oponente {opponentIndex} derrotado (de nuevo).");
         }
+        CheckForAllDefeated();
+    }
+
+    private void CheckForAllDefeated()
+    {
+
+        bool allDefeated = true;
+        for (int i = 0; i < opponents; i++)
+        {
+            if (!defeatedOpponents[i])
+            {
+                allDefeated = false;
+                break;
+            }
+        }
+
+        if (allDefeated)
+        {
+            Debug.Log("🎉🎊 ¡FELICIDADES! ¡Has derrotado a TODOS los oponentes! 🎊🎉");
+           
+        }
     }
 
     public void ResetProgress()

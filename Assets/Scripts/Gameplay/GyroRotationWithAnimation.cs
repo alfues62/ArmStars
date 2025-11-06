@@ -123,6 +123,7 @@ public class GyroRotationWithAnimation : MonoBehaviour
         if(miGameLogic.opponentDefeated == true)
         {
             StopGameProcess();
+            // Cuando Ganas UI
             mesa[miGameLogic.dataScript.GetCurrentOpponentIndex()].SetActive(false);
             uiPanelVictoria.SetActive(true);
         }
