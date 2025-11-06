@@ -91,14 +91,8 @@ public class gameLogic : MonoBehaviour
             if (roundsWon >= 2)
             {
                 bossDefeated = true;
-                dataScript.RegisterVictory(opponentIndex);
-
-                // Actualizamos el oponente actual
-                dataScript.UpdateCurrentOpponent();  // Asegúrate de que el índice se actualice
-
-                // Obtener el siguiente oponente
                 opponentIndex = dataScript.GetCurrentOpponentIndex();
-                CheckOpponentStatus();
+                dataScript.RegisterVictory(opponentIndex);
             }
             else
             {
