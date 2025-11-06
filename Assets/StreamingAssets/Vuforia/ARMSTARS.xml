@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig>
+  <Tracking>
+    <ImageTarget name="Oponente3" size="1.000000 1.000000" />
+    <ImageTarget name="Oponente2" size="1.000000 1.000000" />
+    <ImageTarget name="Oponente1" size="1.000000 1.000000" />
+    <ImageTarget name="Opciones" size="1.000000 1.000000" />
+    <ImageTarget name="Armstars2" size="1.000000 1.000000" />
+    <ImageTarget name="Armstars" size="1.000000 1.000000" />
+  </Tracking>
+</QCARConfig>

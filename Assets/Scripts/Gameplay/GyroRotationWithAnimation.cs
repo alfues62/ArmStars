@@ -96,6 +96,8 @@ public class GyroRotationWithAnimation : MonoBehaviour
 
         // Ya NO iniciamos el bucle aquí. Esperamos la señal de Vuforia.
         if (rotationText) rotationText.text = "Apunta a la marca para empezar...";
+
+
     }
 
     void Update()
@@ -127,6 +129,7 @@ public class GyroRotationWithAnimation : MonoBehaviour
         {
             // Llamamos a CheckOpponentStatus para obtener el estado del oponente
             int status = miGameLogic.CheckOpponentStatus();
+            Debug.Log(status);
 
             // Dependiendo del estado, ejecutamos la acción correspondiente
             switch (status)
