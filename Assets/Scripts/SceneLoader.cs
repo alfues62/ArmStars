@@ -3,13 +3,13 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour
 {
-    // Método público para cargar la primera escena
+    // Mï¿½todo pï¿½blico para cargar la primera escena
     public void changeMainMenu()
     {
         SceneManager.LoadScene("mainMenu");
     }
 
-    // Método público para cargar la segunda escena (ejemplo)
+    // Mï¿½todo pï¿½blico para cargar la segunda escena (ejemplo)
     public void changeArmMovement()
     {
         SceneManager.LoadScene("armInspection");
@@ -18,6 +18,11 @@ public class SceneLoader : MonoBehaviour
     public void chargeVideoMenu ()
     {
         SceneManager.LoadScene("videoMenu");
+    }
+
+    public void chargeInstructionsMenu ()
+    {
+        SceneManager.LoadScene("IntstructionsScene");
     }
     public void exitApp()
     {

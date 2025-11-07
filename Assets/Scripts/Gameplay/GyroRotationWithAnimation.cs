@@ -27,6 +27,11 @@ public class GyroRotationWithAnimation : MonoBehaviour
     public GameObject uiPanelOponenteNoDisponible;  // Panel que muestra el mensaje si el oponente no está disponible
     public GameObject uiPanelVictoria;
     public GameObject[] mesa;
+    // --- NUEVO: Panel para cuando no se detecta la marca ---
+    public GameObject uiPanelMarcaNoDetectada;
+
+    public GameObject[] jumbotron;
+    public jumbotronTexts miJumbotronText;
 
     // --- CAMBIO: Reemplazamos los Transforms individuales por arrays ---
     // Asegúrate de que el tamaño de estos arrays coincida con el número de oponentes (ej: 3)
@@ -125,6 +130,15 @@ public class GyroRotationWithAnimation : MonoBehaviour
         targetPosBrazo001_Fail = new Vector3(-7.450581e-09f, 0.01437012f, 1.629815e-08f);
         targetRotBrazo001_Fail = Quaternion.Euler(-26.946f, 79.819f, 61.009f);
 
+        // --- CAMBIO: Configuración inicial de la UI ---
+        // Ocultar todos los paneles al inicio
+        if (uiPanelOponenteDerrotado) uiPanelOponenteDerrotado.SetActive(false);
+        if (uiPanelOponenteNoDisponible) uiPanelOponenteNoDisponible.SetActive(false);
+        if (uiPanelVictoria) uiPanelVictoria.SetActive(false);
+        
+        // --- NUEVO: Mostrar el panel de "buscar marca" por defecto ---
+        if (uiPanelMarcaNoDetectada) uiPanelMarcaNoDetectada.SetActive(true);
+
         // Ya NO iniciamos el bucle aquí. Esperamos la señal de Vuforia.
         if (rotationText) rotationText.text = "Apunta a la marca para empezar...";
     }
@@ -174,6 +188,11 @@ public class GyroRotationWithAnimation : MonoBehaviour
 
     public void startGame()
     {
+        // --- NUEVO: Marca detectada, ocultar panel de "buscar" ---
+        // Lo hacemos aquí fuera para que se oculte incluso
+        // si se muestra el panel "ya derrotado" o "no disponible".
+        if (uiPanelMarcaNoDetectada) uiPanelMarcaNoDetectada.SetActive(false);
+
         // Solo iniciar si no está ya en marcha
         if (currentGameLoop == null)
         {
@@ -215,6 +234,10 @@ public class GyroRotationWithAnimation : MonoBehaviour
     // --- NUEVA FUNCIÓN PÚBLICA (Llamada por Vuforia) ---
     public void StopGameProcess()
     {
+        // --- CAMBIO: Ocultar siempre estos paneles al parar ---
+        if (uiPanelOponenteDerrotado) uiPanelOponenteDerrotado.SetActive(false);
+        if (uiPanelOponenteNoDisponible) uiPanelOponenteNoDisponible.SetActive(false);
+        
         // Solo parar si se está ejecutando
         if (currentGameLoop != null)
         {
@@ -239,6 +262,19 @@ public class GyroRotationWithAnimation : MonoBehaviour
                 ));
             }
 
+            // if (rotationText) rotationText.text = "Marca perdida. Apunta de nuevo..."; // Movido abajo
+        }
+
+        // --- NUEVO: Lógica de UI para "Marca Perdida" ---
+        // Esto se ejecuta después de parar el bucle, o si el bucle
+        // nunca se inició (ej: se mostró "Oponente Derrotado" y se perdió la marca).
+
+        // Si hemos ganado (isGameWon es true), el panel de Victoria
+        // (uiPanelVictoria) se mostrará desde el Update.
+        // NO mostramos el panel de "marca perdida".
+        if (!isGameWon)
+        {
+            if (uiPanelMarcaNoDetectada) uiPanelMarcaNoDetectada.SetActive(true);
             if (rotationText) rotationText.text = "Marca perdida. Apunta de nuevo...";
         }
     }
@@ -264,7 +300,7 @@ public class GyroRotationWithAnimation : MonoBehaviour
             rotationText.text = "3,2,1...";
             PlayAudioClip(countdownClip);
             yield return new WaitForSeconds(countdownClip.length);
-            yield return new WaitForSeconds(Random.Range(randomWaitTimeMin, randomWaitTimeMax));
+            // yield return new WaitForSeconds(Random.Range(randomWaitTimeMin, randomWaitTimeMax)); // Movido
 
             bool falseStart = false;
             float randomWaitTime = Random.Range(randomWaitTimeMin, randomWaitTimeMax);
