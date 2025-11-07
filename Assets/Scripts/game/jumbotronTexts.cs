@@ -75,18 +75,29 @@ public class jumbotronTexts : MonoBehaviour
                     textoEstado.text = "DERROTA";
                 }
                 break;
+            case 7:
+                //Ocultamos tiempo y mostramos el texto de derrota
+                foreach(var textoTiempo in timeTexts) {
+                    textoTiempo.enabled = false;
+                    
+                }
+                foreach(var textoEstado in stateTexts) {
+                    textoEstado.enabled = true;
+                    textoEstado.text = "GO";
+                }
+                break;
         }
     }
 
     private string parseTimeToText(float timeOriginal) {
         if (timeOriginal < 0){
-            return "00:00";
+            return "";
         }
         // Separmos segundos y milésimas
-        int segundos = Mathf.FloorToInt(timeOriginal);
+        int segundos = Mathf.FloorToInt(timeOriginal) + 1;
         int milesimas = Mathf.FloorToInt((timeOriginal - segundos) * 100);
-
-        return string.Format("{0:00}:{1:00}", segundos, milesimas);
+        return segundos.ToString();
+        //return string.Format("{0:00}:{1:00}", segundos, milesimas);
     }
 
     public void SetTimeJumbotron(float time) {

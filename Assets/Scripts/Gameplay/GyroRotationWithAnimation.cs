@@ -31,7 +31,7 @@ public class GyroRotationWithAnimation : MonoBehaviour
     public GameObject uiPanelMarcaNoDetectada;
 
     public GameObject[] jumbotron;
-    public jumbotronTexts miJumbotronText;
+    //public jumbotronTexts miJumbotronText;
 
     // --- CAMBIO: Reemplazamos los Transforms individuales por arrays ---
     // Asegúrate de que el tamaño de estos arrays coincida con el número de oponentes (ej: 3)
@@ -168,8 +168,14 @@ public class GyroRotationWithAnimation : MonoBehaviour
 
             StopGameProcess();
             // Cuando Ganas UI
-            mesa[miGameLogic.dataScript.GetCurrentOpponentIndex()].SetActive(false);
-            uiPanelVictoria.SetActive(true);
+            mesa[miGameLogic.dataScript.GetCurrentOpponentIndex()].SetActive(true);
+            int currentIndex = miGameLogic.dataScript.GetCurrentOpponentIndex();
+            var jump1 = jumbotron[currentIndex].GetComponent<jumbotronTexts>();
+            jump1.Victory();
+        }
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            miGameLogic.dataScript.ResetProgress();
         }
     }
 
@@ -284,12 +290,17 @@ public class GyroRotationWithAnimation : MonoBehaviour
     {
         while (true) // Este bucle ahora se repite solo mientras la corutina esté activa
         {
+            if(miGameLogic.bossNotDefeated){
+                yield return new WaitForSeconds(2f);
+                miGameLogic.bossNotDefeated = false;
+            }
             // --- CAMBIO: Obtener el índice del oponente actual ---
             int currentIndex = miGameLogic.dataScript.GetCurrentOpponentIndex();
 
             // Determinar el tiempo de reacción según el enemigo actual
             float tiempoReaccion = GetReactionTimeForEnemy(currentIndex);
-
+            var jump1 = jumbotron[currentIndex].GetComponent<jumbotronTexts>();
+            jump1.ShowTexts(1);
             // --- 1. FASE DE ESPERA (IDLE) ---
             currentState = GameState.Idle;
             rotationText.text = "Prepárate...";
@@ -298,6 +309,8 @@ public class GyroRotationWithAnimation : MonoBehaviour
             // --- 2. FASE DE CUENTA ATRÁS (COUNTDOWN) ---
             currentState = GameState.Countdown;
             rotationText.text = "3,2,1...";
+            jump1.SetTimeJumbotron(3f);
+            jump1.StartTimeJumbotron();
             PlayAudioClip(countdownClip);
             yield return new WaitForSeconds(countdownClip.length);
             // yield return new WaitForSeconds(Random.Range(randomWaitTimeMin, randomWaitTimeMax)); // Movido
@@ -332,6 +345,8 @@ public class GyroRotationWithAnimation : MonoBehaviour
             // --- 3. FASE DE ESCUCHA (LISTENING) ---
             currentState = GameState.Listening;
             rotationText.text = "¡GO!";
+            jump1.StopTimeJumbotron();
+            jump1.ShowTexts(7);
 
             // Reproducir el sonido de "¡GO!".
             PlayAudioClip(goClip);
@@ -358,6 +373,7 @@ public class GyroRotationWithAnimation : MonoBehaviour
                 rotationText.text = "¡BIEN HECHO!";
                 // --- CAMBIO: Pasar el índice a la corutina de animación ---
                 yield return StartCoroutine(DoRotation_Success(currentIndex));
+                jump1.ShowTexts(2);
                 if (miGameLogic != null)
                 {
                     miGameLogic.WinRound();
@@ -368,6 +384,7 @@ public class GyroRotationWithAnimation : MonoBehaviour
                 rotationText.text = "¡FALLO!";
                 // --- CAMBIO: Pasar el índice a la corutina de animación ---
                 yield return StartCoroutine(DoRotation_Fail(currentIndex));
+                jump1.ShowTexts(3);
                 if (miGameLogic != null)
                 {
                     miGameLogic.LoseRound();
