@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using TMPro;
 using System.Collections;
 
@@ -33,7 +33,7 @@ public class GyroRotationWithAnimation : MonoBehaviour
     public GameObject uiPanelMarcaNoDetectada;
 
     public GameObject[] jumbotron;
-    public jumbotronTexts miJumbotronText;
+    //public jumbotronTexts miJumbotronText;
 
     [Header("Huesos a Rotar (Arrays)")]
     public Transform[] huesosBrazos_Array;
@@ -148,8 +148,15 @@ public class GyroRotationWithAnimation : MonoBehaviour
             isGameWon = true;
 
             StopGameProcess();
-            mesa[miGameLogic.dataScript.GetCurrentOpponentIndex()].SetActive(false);
-            uiPanelVictoria.SetActive(true);
+            // Cuando Ganas UI
+            mesa[miGameLogic.dataScript.GetCurrentOpponentIndex()].SetActive(true);
+            int currentIndex = miGameLogic.dataScript.GetCurrentOpponentIndex();
+            var jump1 = jumbotron[currentIndex].GetComponent<jumbotronTexts>();
+            jump1.Victory();
+        }
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            miGameLogic.dataScript.ResetProgress();
         }
     }
 
@@ -238,9 +245,15 @@ public class GyroRotationWithAnimation : MonoBehaviour
     {
         while (true) 
         {
+            if(miGameLogic.bossNotDefeated){
+                yield return new WaitForSeconds(2f);
+                miGameLogic.bossNotDefeated = false;
+            }
+            // --- CAMBIO: Obtener el índice del oponente actual ---
             int currentIndex = miGameLogic.dataScript.GetCurrentOpponentIndex();
             float tiempoReaccion = GetReactionTimeForEnemy(currentIndex);
-
+            var jump1 = jumbotron[currentIndex].GetComponent<jumbotronTexts>();
+            jump1.ShowTexts(1);
             // --- 1. FASE DE ESPERA (IDLE) ---
             currentState = GameState.Idle;
             rotationText.text = "Prepárate...";
@@ -257,6 +270,8 @@ public class GyroRotationWithAnimation : MonoBehaviour
             // --- CAMBIO 1: Interrumpir cualquier sonido (gruñido) antes de reproducir el "3,2,1" ---
             if (AudioSource.isPlaying) AudioSource.Stop();
             
+            jump1.SetTimeJumbotron(3f);
+            jump1.StartTimeJumbotron();
             PlayAudioClip(countdownClip);
             yield return new WaitForSeconds(countdownClip.length);
             
@@ -290,6 +305,8 @@ public class GyroRotationWithAnimation : MonoBehaviour
             // --- 3. FASE DE ESCUCHA (LISTENING) ---
             currentState = GameState.Listening;
             rotationText.text = "¡GO!";
+            jump1.StopTimeJumbotron();
+            jump1.ShowTexts(7);
 
             // --- CAMBIO 2: Interrumpir el "3,2,1" (si aún suena) para dar paso al "GO!" ---
             if (AudioSource.isPlaying) AudioSource.Stop();
@@ -318,6 +335,7 @@ public class GyroRotationWithAnimation : MonoBehaviour
             {
                 rotationText.text = "¡BIEN HECHO!";
                 yield return StartCoroutine(DoRotation_Success(currentIndex));
+                jump1.ShowTexts(2);
                 if (miGameLogic != null)
                 {
                     miGameLogic.WinRound();
@@ -327,6 +345,7 @@ public class GyroRotationWithAnimation : MonoBehaviour
             {
                 rotationText.text = "¡FALLO!";
                 yield return StartCoroutine(DoRotation_Fail(currentIndex));
+                jump1.ShowTexts(3);
                 if (miGameLogic != null)
                 {
                     miGameLogic.LoseRound();

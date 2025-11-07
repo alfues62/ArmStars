@@ -1,5 +1,6 @@
-﻿using UnityEngine;
+using UnityEngine;
 using TMPro;
+using System.Collections;
 
 public class gameLogic : MonoBehaviour
 {
@@ -20,9 +21,11 @@ public class gameLogic : MonoBehaviour
     [Header("Opponent Data")]
     private int opponentIndex;
     public int totalRounds = 3;
-    private int roundsWon = 0;
+    public int roundsWon = 0;
     private int roundsPlayed = 0;
     private bool bossDefeated = false;
+    public bool bossNotDefeated = false;
+
     public bool opponentDefeated = false;
 
     void Start()
@@ -77,11 +80,9 @@ public class gameLogic : MonoBehaviour
 
     void UpdateRoundText()
     {
-        if (roundText != null)
-        {
-            // Usamos $ para formatear el string fácilmente
-            roundText.text = $"Ronda: {roundsPlayed} / {totalRounds}";
-        }
+        int indice = dataScript.GetCurrentOpponentIndex();
+        var jump = gamePlay.jumbotron[indice].GetComponent<jumbotronTexts>();
+        jump.SetRoundNumJumbotron(roundsPlayed+1);
     }
 
     public void WinRound()
@@ -116,6 +117,7 @@ public class gameLogic : MonoBehaviour
             {
                 // --- Has Ganado la Partida ---
                 bossDefeated = true;
+                StartCoroutine(GanarConEspera());
                 opponentIndex = dataScript.GetCurrentOpponentIndex();
                 dataScript.RegisterVictory(opponentIndex);
                 opponentDefeated = true;
@@ -131,6 +133,9 @@ public class gameLogic : MonoBehaviour
                 PlayMatchSound(sonidoDerrotaPartida);
                 
                 // Reseteas para el reintento
+                bossNotDefeated = true;
+                StartCoroutine(EjecutarConEspera());
+
                 roundsWon = 0;
                 roundsPlayed = 0;
                 UpdateRoundText();
@@ -148,6 +153,27 @@ public class gameLogic : MonoBehaviour
         }
     }
     // --- FIN NUEVO ---
+
+    private IEnumerator EjecutarConEspera()
+    {
+        // Ejecutas tu código
+        int indice = dataScript.GetCurrentOpponentIndex();
+        var jump1 = gamePlay.jumbotron[indice].GetComponent<jumbotronTexts>();
+        jump1.ShowTexts(3);
+
+        // Espera 2 segundos antes de continuar
+        yield return new WaitForSeconds(2f);
+    }
+    private IEnumerator GanarConEspera()
+    {
+        // Ejecutas tu código
+        int indice = dataScript.GetCurrentOpponentIndex();
+        var jump1 = gamePlay.jumbotron[indice].GetComponent<jumbotronTexts>();
+        jump1.Victory();
+
+        // Espera 2 segundos antes de continuar
+        yield return new WaitForSeconds(2f);
+    }
 
     public void ResetRounds()
     {
