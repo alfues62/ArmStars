@@ -9,6 +9,14 @@ public class gameLogic : MonoBehaviour
     [Header("UI Elements")]
     public TMP_Text roundText;
 
+    // --- NUEVO: Audio de Victoria/Derrota de la Partida ---
+    [Header("Audio de Partida")]
+    [Tooltip("AudioSource para los sonidos de victoria/derrota de la partida")]
+    public AudioSource audioSourcePartida;
+    public AudioClip sonidoVictoriaPartida; // Sonido al ganar el "mejor de 3"
+    public AudioClip sonidoDerrotaPartida;  // Sonido al perder el "mejor de 3"
+    // --- FIN NUEVO ---
+
     [Header("Opponent Data")]
     private int opponentIndex;
     public int totalRounds = 3;
@@ -23,6 +31,20 @@ public class gameLogic : MonoBehaviour
         {
             dataScript = FindAnyObjectByType<gameData>();
         }
+
+        // --- NUEVO: Asegurarse de tener un AudioSource ---
+        // Si no asignas uno en el Inspector, buscará uno en este GameObject.
+        // Si no lo encuentra, añadirá uno nuevo.
+        if (audioSourcePartida == null)
+        {
+            audioSourcePartida = GetComponent<AudioSource>();
+            if (audioSourcePartida == null)
+            {
+                audioSourcePartida = gameObject.AddComponent<AudioSource>();
+                audioSourcePartida.playOnAwake = false; // Buena práctica
+            }
+        }
+        // --- FIN NUEVO ---
 
         int status = CheckOpponentStatus();
 
@@ -55,8 +77,11 @@ public class gameLogic : MonoBehaviour
 
     void UpdateRoundText()
     {
-        int indice = gameData.GetCurrentOpponentIndex();
-        gamePlay.jumbotron[indice].roundText = gamePlay.miJumbotronText.SetRoundNumJumbotron(roundsPlayed);
+        if (roundText != null)
+        {
+            // Usamos $ para formatear el string fácilmente
+            roundText.text = $"Ronda: {roundsPlayed} / {totalRounds}";
+        }
     }
 
     public void WinRound()
@@ -89,21 +114,41 @@ public class gameLogic : MonoBehaviour
         {
             if (roundsWon >= 2)
             {
+                // --- Has Ganado la Partida ---
                 bossDefeated = true;
                 opponentIndex = dataScript.GetCurrentOpponentIndex();
                 dataScript.RegisterVictory(opponentIndex);
                 opponentDefeated = true;
+
+                // --- NUEVO: Reproducir sonido de VICTORIA ---
+                PlayMatchSound(sonidoVictoriaPartida);
             }
             else
             {
-
+                // --- Has Perdido la Partida ---
+                
+                // --- NUEVO: Reproducir sonido de DERROTA ---
+                PlayMatchSound(sonidoDerrotaPartida);
+                
+                // Reseteas para el reintento
                 roundsWon = 0;
                 roundsPlayed = 0;
-
                 UpdateRoundText();
             }
         }
     }
+
+    // --- NUEVA FUNCIÓN ---
+    // Un simple helper para reproducir el sonido
+    void PlayMatchSound(AudioClip clip)
+    {
+        if (clip != null && audioSourcePartida != null)
+        {
+            audioSourcePartida.PlayOneShot(clip);
+        }
+    }
+    // --- FIN NUEVO ---
+
     public void ResetRounds()
     {
         // Resetea los contadores para el nuevo combate
@@ -116,5 +161,4 @@ public class gameLogic : MonoBehaviour
 
         Debug.Log("--- ¡Contadores de rondas reseteados para un nuevo combate! ---");
     }
-
 }
