@@ -4,6 +4,7 @@ using TMPro;
 public class gameLogic : MonoBehaviour
 {
     public gameData dataScript;
+    public GyroRotationWithAnimation gamePlay;
 
     [Header("UI Elements")]
     public TMP_Text roundText;
@@ -53,13 +54,10 @@ public class gameLogic : MonoBehaviour
     }
 
     void UpdateRoundText()
-        {
-            if (roundText != null)
-            {
-                // Usamos $ para formatear el string fácilmente
-                roundText.text = $"Ronda: {roundsPlayed} / {totalRounds}";
-            }
-        }
+    {
+        int indice = gameData.GetCurrentOpponentIndex();
+        gamePlay.jumbotron[indice].roundText = gamePlay.miJumbotronText.SetRoundNumJumbotron(roundsPlayed);
+    }
 
     public void WinRound()
     {

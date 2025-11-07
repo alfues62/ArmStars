@@ -50,7 +50,6 @@ public class gameData : MonoBehaviour
             }
         }
     }
-
     private void HandleTargetStatus(int index, TargetStatus status)
     {
         if (status.Status == Status.TRACKED || status.Status == Status.EXTENDED_TRACKED)
